@@ -15,7 +15,6 @@ public class MainActivity extends AppCompatActivity {
     EditText edPeso;
     EditText edAltura;
     Button button;
-    ImageView imageView;
     TextView textView;
 
     @Override
@@ -27,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         edPeso = findViewById(R.id.ed1);
         edAltura = findViewById(R.id.ed2);
 //        tvImc = findViewById(R.id.tvImc);
-        imageView = findViewById(R.id.imageView);
+
         button = findViewById(R.id.button);
 
         button.setOnClickListener(v ->{
