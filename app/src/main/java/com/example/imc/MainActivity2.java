@@ -30,5 +30,12 @@ public class MainActivity2 extends AppCompatActivity {
         button.setOnClickListener(v ->{
             finish();
         });
+
+        Intent i = getIntent();
+        Bundle bundle = i.getExtras();
+        Double peso = bundle.getDouble("pesoUsr");
+        Double altura = bundle.getDouble("alturaUsr");
+
+        double imc=peso/altura*altura;
     }
 }
