@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
         sqLiteDatabase = openOrCreateDatabase("banco.db",MODE_PRIVATE, null);
         sqLiteDatabase.execSQL("DROP TABLE notas");
-        sqLiteDatabase.execSQL("CREATE TABLE notas (id INTEGER PRIMARY KEY AUTOINCREMENT , titulo TEXT, conteudo TEXT );");
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS notas (id INTEGER PRIMARY KEY AUTOINCREMENT , titulo TEXT, conteudo TEXT );");
         consultarDados();
     }
 
