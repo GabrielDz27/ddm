@@ -1,6 +1,5 @@
 package com.example.geolocalizacao;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -16,9 +15,18 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
+
 public class MainActivity extends AppCompatActivity {
 
+
     LocationManager locationManager;
+
+    MapView mapView;
+
+    Marker markerPosicaoAtual;
 
     @SuppressLint("ServiceCast")
     @Override
@@ -29,18 +37,45 @@ public class MainActivity extends AppCompatActivity {
 
         TextView tv = findViewById(R.id.textView);
 
-        checkLocationPermission();
+        mapInit();
 
-        locationManager = (LocationManager) getSystemService(LOCALE_SERVICE);
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        locationManager.requestLocationUpdates(
-                locationManager.GPS_PROVIDER,
-                0,0,
-                location -> {
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
-                    tv.setText("Latitude: "+ latitude + "\nLongitude: " + longitude);
-                });
+        if (checkLocationPermission()) {
+            locationManager.requestLocationUpdates(
+                    locationManager.GPS_PROVIDER,
+                    0,0,
+                    location -> {
+                        double latitude = location.getLatitude();
+                        double longitude = location.getLongitude();
+                        tv.setText("Latitude: "+ latitude + "\nLongitude: " + longitude);
+                        showLocationOnMap(location);
+                    });
+        }
+
+
+    }
+
+    public void mapInit() {
+        mapView.setMultiTouchControls(true);
+        mapView.getController().setZoom(16.0);
+    }
+
+    public void showLocationOnMap(Location location) {
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+
+        GeoPoint myLocation = new GeoPoint(latitude, longitude);
+
+        mapView.getController().setCenter(myLocation);
+        if (markerPosicaoAtual == null) {
+            markerPosicaoAtual = new Marker(mapView);
+        }
+        markerPosicaoAtual.setPosition(myLocation);
+        markerPosicaoAtual.setTitle("Minha localização");
+
+        mapView.getOverlays().clear();
+        mapView.getOverlays().add(markerPosicaoAtual);
     }
 
     @Override
@@ -50,17 +85,16 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
 
             } else {
-
+                checkLocationPermission();
             }
         }
     }
 
-    public void checkLocationPermission() {
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+    public boolean checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},1);
+            return false;
         }
+        return true;
     }
-
-
 }
