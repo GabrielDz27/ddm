@@ -14,9 +14,10 @@ Repositório dedicado ao armazenamento dos projetos e práticas desenvolvidos na
 * ### 2. sorteador: Sorteio de Números Aleatórios
 * ### 3. slideshow: Slide Show
 * ### 4. imc: Calculadora de IMC (Duas Telas)
-* ### 5. Listagem
+* ### 5. Listagem 
 * ### 6. simplepaint: Simple Paint
 * ### 7. sqlite: Aplicativo Bloco de Notas
+* ### 8. geolocalizacao: Aplicativo de LocationManager
 ---
 
 ## Tecnologias e Ferramentas
