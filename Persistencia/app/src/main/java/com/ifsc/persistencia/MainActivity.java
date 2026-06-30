@@ -1,74 +1,72 @@
 package com.ifsc.persistencia;
 
-import android.annotation.SuppressLint;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
-
-import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    SQLiteDatabase sqLiteDatabase;
-    ListView listView;
-    EditText editText;
-    Button button;
-    ArrayList<String> list;
-    ArrayAdapter<String> asdapter;
+    private ListView listView;
+    private Button btnAdicionar;
+    private NotaController notaController;
+    private ArrayList<Nota> listaNotas;
+    private ArrayList<String> listaTitulos;
+    private ArrayAdapter<String> adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
         listView = findViewById(R.id.listview);
-        button = findViewById(R.id.salvar);
-        editText = findViewById(R.id.editTextText);
-        button.setOnClickListener(v -> {
-            String string = editText.getText().toString();
-            ContentValues contentValues = new ContentValues();
-            contentValues.put("titulo","x");
-            contentValues.put("conteudo","COnteudo da nota 1");
-            sqLiteDatabase.insert("notas",null,contentValues);
-            consultarDados();
+        btnAdicionar = findViewById(R.id.btnAdicionar);
+        notaController = new NotaController(this);
+
+        btnAdicionar.setOnClickListener(v -> {
+            Intent intent = new Intent(this, NotaActivity.class);
+            startActivity(intent);
         });
 
-        sqLiteDatabase = openOrCreateDatabase("banco.db",MODE_PRIVATE, null);
-        sqLiteDatabase.execSQL("DROP TABLE notas");
-        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS notas (id INTEGER PRIMARY KEY AUTOINCREMENT , titulo TEXT, conteudo TEXT );");
-        consultarDados();
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            Nota nota = listaNotas.get(position);
+            Intent intent = new Intent(this, NotaActivity.class);
+            intent.putExtra("ID", nota.getId());
+            startActivity(intent);
+        });
+
+        listView.setOnItemLongClickListener((parent, view, position, id) -> {
+            Nota nota = listaNotas.get(position);
+            new AlertDialog.Builder(this)
+                    .setTitle("Excluir nota")
+                    .setMessage("Deseja realmente excluir esta nota?")
+                    .setPositiveButton("Sim", (dialog, which) -> {
+                        notaController.deleteNota(nota.getId());
+                        atualizarLista();
+                    })
+                    .setNegativeButton("Não", null)
+                    .show();
+            return true;
+        });
     }
 
-    public void consultarDados() {
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM notas",null);
-        cursor.moveToFirst();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        atualizarLista();
+    }
 
-        list = new ArrayList<>();
-        while (!cursor.isAfterLast()) {
-            @SuppressLint("Range")
-            int id = cursor.getInt(cursor.getColumnIndex("id"));
-            @SuppressLint("Range")
-            String titulo = cursor.getString(cursor.getColumnIndex("titulo"));
-            @SuppressLint("Range")
-            String conteudo = cursor.getString(cursor.getColumnIndex("conteudo"));
-            list.add("id"+Integer.toString(id)+"titulo: "+titulo);
-            cursor.moveToNext();
-
-            Log.d("Sele notas", "id: "+id+", titulo:"+titulo+" conteudo:"+conteudo);
+    private void atualizarLista() {
+        listaNotas = notaController.listarNotas();
+        listaTitulos = new ArrayList<>();
+        for (Nota n : listaNotas) {
+            listaTitulos.add(n.getTitulo());
         }
-        asdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, list);
-        listView.setAdapter(asdapter);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listaTitulos);
+        listView.setAdapter(adapter);
     }
 }
