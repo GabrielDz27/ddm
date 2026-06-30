@@ -14,7 +14,7 @@ Repositório dedicado ao armazenamento dos projetos e práticas desenvolvidos na
 * ### 2. sorteador: Sorteio de Números Aleatórios
 * ### 3. slideshow: Slide Show
 * ### 4. imc: Calculadora de IMC (Duas Telas)
-* ### 5. Lista de ViewGroups
+* ### 5. Listagem
 * ### 6. simplepaint: Simple Paint
 * ### 7. sqlite: Aplicativo Bloco de Notas
 ---
