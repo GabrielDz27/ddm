@@ -16,7 +16,11 @@ public class NotaController {
     }
 
     public boolean deleteNota(int id) {
-        return false;
+        return notaDAO.removeNota(id);
+    }
+
+    public void atualizarNota(Nota nota) {
+        notaDAO.atualizarNota(nota);
     }
 
     public Nota getNota(int id) {
@@ -24,14 +28,14 @@ public class NotaController {
     }
 
     public ArrayList<Nota> listarNotas() {
-        return new ArrayList<>();
+        return notaDAO.listarNotas();
     }
 
     public ArrayList<String> listaTitulosNotas() {
         ArrayList<Nota> notas = this.listarNotas();
         ArrayList<String> titulosNotas = new ArrayList<>();
 
-        for (Nota n: notas) {
+        for (Nota n : notas) {
             titulosNotas.add(n.getTitulo());
         }
         return titulosNotas;
